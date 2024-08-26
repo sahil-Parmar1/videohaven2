@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video View</title>
+    <link rel="stylesheet" href="videoview.css">
+</head>
+<body>
+
+    <div class="app-bar">
+        <button class="back-button" onclick="history.back()">Back</button>
+        <h1>VideoHaven Viewer</h1>
+        <img src="logo.png" alt="MyTube Logo"> <!-- Replace with your logo path -->
+    </div>
+
+    <div class="content">
+        <div class="video-container">
+            <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="video-info" id="videoInfo">
+            <h2>Loading...</h2>
+            <p>Please wait while the video information loads.</p>
+        </div>
+        <div class="suggestions" id="suggestions">
+            <!-- Suggestions will be dynamically added here -->
+        </div>
+        <button class="load-more" id="loadMoreBtn">Load More</button>
+    </div>
+
+    <script>
+        const API_KEY = 'AIzaSyA3jettFRrAFXpNzQdtjHSOwutBxhVr9MQ'; // Replace with your YouTube API key
+        const API_KEY2='AIzaSyBNPWB3flCC3ld3AKO-k4enmIcpPuQx3uk';
+        const API_KEY3='AIzaSyBNPWB3flCC3ld3AKO-k4enmIcpPuQx3uk';
+        const API_KEY4='AIzaSyCOmcLIaJw-iE2aum2Pyel-ILXIRvhy_DA';
+        const API_KEYS=[
+                'AIzaSyA3jettFRrAFXpNzQdtjHSOwutBxhVr9MQ',
+                'AIzaSyBNPWB3flCC3ld3AKO-k4enmIcpPuQx3uk',
+                'AIzaSyDRuj1dmBIfBBIZKACktYFxUZmwsYVMUkg',
+                'AIzaSyCOmcLIaJw-iE2aum2Pyel-ILXIRvhy_DA',
+            ];
+        const MAX_RESULTS = 10;
+        let nextPageToken = '';
+        let currentApiKeyIndex = 0;
+
+        function getVideoIdFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('videoId');
+        }
+
+        function getInterestFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.has('interest') ? params.get('interest') : 'general'; // Default to 'general' if interest is not found
+        }
+        
+        async function fetchVideoInfo(videoId) {
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEYS[currentApiKeyIndex]}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        if (data.error) {
+            throw new Error('API error');
+        }
+        return data.items[0].snippet;
+    } catch (error) {
+        // Try the next API key if available
+        if (currentApiKeyIndex < API_KEYS.length - 1) {
+            currentApiKeyIndex++;
+            return fetchVideoInfo(videoId); // Retry with the next API key
+        } else {
+            // No more API keys to try
+            throw new Error('All API keys failed');
+        }
+    }
+}
+
+async function fetchVideos(interest, pageToken = '') {
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(interest)}&type=video&maxResults=${MAX_RESULTS}&pageToken=${pageToken}&key=${API_KEYS[currentApiKeyIndex]}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        if (data.error) {
+            throw new Error('API error');
+        }
+        nextPageToken = data.nextPageToken;
+        return data.items;
+    } catch (error) {
+        // Try the next API key if available
+        if (currentApiKeyIndex < API_KEYS.length - 1) {
+            currentApiKeyIndex++;
+            return fetchVideos(interest, pageToken); // Retry with the next API key
+        } else {
+            // No more API keys to try
+            throw new Error('All API keys failed');
+        }
+    }
+}
+
+        function createSuggestion(video) {
+            const suggestion = document.createElement('div');
+            suggestion.className = 'suggestion';
+            suggestion.onclick = () => {
+                window.location.href = `videoview.html?videoId=${video.id.videoId}&interest=${getInterestFromURL()}`;
+            };
+            
+            suggestion.innerHTML = `
+                <img src="${video.snippet.thumbnails.high.url}" alt="${video.snippet.title}" class="suggestion-image">
+                <h3 class="suggestion-title">${video.snippet.title}</h3>
+                <p class="suggestion-channel">${video.snippet.channelTitle}</p>
+            `;
+        
+            return suggestion;
+        }
+        
+        
+        
+        
+
+        function truncateText(text, maxLength) {
+            if (text.length > maxLength) {
+                return `${text.substring(0, maxLength)}... <span class="show-more" style="color: blue; cursor: pointer;">Show More</span>`;
+            }
+            return text;
+        }
+
+        async function loadVideo() {
+            const videoId = getVideoIdFromURL();
+            const interest = getInterestFromURL();
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoInfo = document.getElementById('videoInfo');
+            const suggestions = document.getElementById('suggestions');
+
+            if (videoId) {
+                videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
+                const snippet = await fetchVideoInfo(videoId);
+                videoInfo.innerHTML = `
+                    <h2>${snippet.title}</h2>
+                    <p>${truncateText(snippet.description, 200)}</p>
+                `;
+
+                document.querySelector('.show-more').addEventListener('click', function() {
+                    this.parentElement.innerHTML = snippet.description;
+                });
+
+                const relatedVideos = await fetchVideos(interest);
+                relatedVideos.forEach(video => {
+                    suggestions.appendChild(createSuggestion(video));
+                });
+            } else {
+                document.body.innerHTML = '<h2 style="color: #e0e0e0; text-align: center;">Video not found.</h2>';
+            }
+        }
+
+        async function loadMoreVideos() {
+            const interest = getInterestFromURL();
+            const suggestions = document.getElementById('suggestions');
+            const relatedVideos = await fetchVideos(interest, nextPageToken);
+            relatedVideos.forEach(video => {
+                suggestions.appendChild(createSuggestion(video));
+            });
+        }
+
+        document.getElementById('loadMoreBtn').addEventListener('click', loadMoreVideos);
+
+        window.onload = loadVideo;
+    </script>
+</body>
+</html>

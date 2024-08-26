@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoHaven</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header-fixed">
+        <div class="menu" id="menuButton"><button onclick="toggleSidebar()" class="menubutton"><i class="fas fa-filter"></i>
+        </button></div>
+        
+        <div class="search-bar">
+            <table cellpadding="10" cellspacing="0">
+                <tr>
+                    <td><img src="logo.png" alt="MyTube Logo" class="app-logo"></td>
+                    <td><input type="text" id="search-input" placeholder="Search"></td>
+                    <td><button onclick="searchVideos()">Search</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="user-options">
+            <div id="signInButton" style="display: none;">
+                <button onclick="window.location.href='signin.html'">Sign In</button>
+            </div>
+            <div id="signUpButton" style="display: none;">
+                <button onclick="window.location.href='signup.html'">Sign Up</button>
+            </div>
+            <div id="emailLogo" class="logoemail" style="display: none;" onclick="toggleDropdown()"></div> <!-- Logo displaying the first character of the email -->
+            
+            <div id="dropdown" class="dropdown-content" style="display: none;">
+                <ul class="dropdown-menu">
+                    <li id="email" style="color: white;">User Email</li>
+                    <li id="signOutButton">
+                        <a href="index.html">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <h3 align="right"><button class="close-button" onclick="toggleSidebar()">❌</button></h3>
+        <h3 align="center">Feed</h3>
+        <ul>
+            <!-- Top Channels Dropdown -->
+            <li onclick="loadInterest('Technology')">Technology</li>
+            <li onclick="loadInterest('Gaming')">Gaming</li>
+            <li onclick="loadInterest('News')">News</li>
+            <li onclick="loadInterest('History')">History</li>
+        </ul>
+        <h3 align="center">Top-Channel</h3>
+        <ul>
+            <li onclick="loadInterest('Mr.Beast')"><table><tr>
+                <td><img src="images/mrbeast.png" alt="" class="channel-logo"></td>
+                <td>Mr.Beast</td>
+            </tr></table></li>
+            <li onclick="loadInterest('T-series')"><table><tr>
+                <td><img src="images/tseries.webp" alt="" class="channel-logo"></td>
+                <td>T-series</td>
+            </tr></table></li>
+            <li onclick="loadInterest('SET-India')"><table><tr>
+                <td><img src="images/setindia.jpg" alt="" class="channel-logo"></td>
+                <td>SET-India</td>
+            </tr></table></li>
+            <li onclick="loadInterest('Kids Diana Show')"><table><tr>
+                <td><img src="https://yt3.ggpht.com/a/AGF-l788z_ZUqXrqW8qLNO-zITrOJmGlAjZiqIvVjg=s900-c-k-c0xffffffff-no-rj-mo" alt="" class="channel-logo"></td>
+                <td>Kids Diana Show</td>
+            </tr></table></li>
+            <li onclick="loadInterest('Cocomelon')"><table><tr>
+                <td><img src="https://blog.logomyway.com/wp-content/uploads/2022/09/CoComelon-Logo-transparent-1.png" alt="" class="channel-logo"></td>
+                <td>Cocomelon</td>
+            </tr></table></li>
+            <li onclick="loadInterest('PewDiePie')"><table><tr>
+                <td><img src="https://logos-world.net/wp-content/uploads/2022/01/Pewdiepie-Emblem.png" alt="" class="channel-logo"></td>
+                <td>PewDiePie</td>
+            </tr></table></li>
+        </ul>
+        <h3 align="center">Movie-Channel</h3>
+        <ul>
+            <li onclick="loadInterest('GoldMines')"><table><tr>
+                <td><img src="https://yt3.ggpht.com/-m8auSoc9YSQ/AAAAAAAAAAI/AAAAAAAAAAA/Ob6fPwQNJvQ/s900-c-k-no-mo-rj-c0xffffff/photo.jpg" alt="" class="channel-logo"></td>
+                <td>GoldMines</td>
+            </tr></table></li>
+            <li onclick="loadInterest('Shemaroo Movies')"><table><tr>
+                <td><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhCyDLs_qhRnSjVo6LrrQyD0Idk3MrvSP5MzAoAWLnaoy8hsJXxtE5AgW_R1zRIj0QDm8SD2RMRgb6WQANP_yPYVIaNSQ_1cktZgA-GTq6RnAiKlAMVRdEUy_j4LOm7lchm_G3cWlsqdND-Sp9tijX9wci_46a6V5d3U1Nt-XH6xaIOosIfO5MgcEMp/w640-h640/shemaroo-movies.jpg" alt="" class="channel-logo"></td>
+                <td>Shemaroo Movies</td>
+            </tr></table></li>
+            <li onclick="loadInterest('Zee Movies')"><table><tr>
+                <td><img src="https://scontent.famd15-1.fna.fbcdn.net/v/t39.30808-6/363414596_105284599323267_1566562058934785319_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=pK-EvQbP_uoQ7kNvgFAHftf&_nc_ht=scontent.famd15-1.fna&oh=00_AYCnhhRcZHjDI0EtLHyLSq9PflcPuYMXC4ztG345RN8-sA&oe=66D1058B" alt="" class="channel-logo"></td>
+                <td>Zee Movies</td>
+            </tr></table></li>
+            <li onclick="loadInterest('Netflix India')"><table><tr>
+                <td><img src="https://www.leisurebyte.com/wp-content/uploads/2021/03/Netflix-India.jpg" alt="" class="channel-logo"></td>
+                <td>Netflix India</td>
+            </tr></table></li>
+        </ul>
+        <h3 align="center">Music-Channel</h3>
+        <ul>
+            <li onclick="loadInterest('Zee Music Company')"><table><tr>
+                <td><img src="https://yt3.ggpht.com/-Gat2C8120Gg/AAAAAAAAAAI/AAAAAAAAAAA/LyluTxAMv4M/s900-c-k-no-mo-rj-c0xffffff/photo.jpg" alt="" class="channel-logo"></td>
+                <td>Zee Music Company</td>
+            </tr></table></li>
+            <li onclick="loadInterest('T-series')"><table><tr>
+                <td><img src="images/tseries.webp" alt="" class="channel-logo"></td>
+                <td>T-series</td>
+            </tr></table></li>
+            <li onclick="loadInterest('SonyMusicIndia')"><table><tr>
+                <td><img src="https://yt3.ggpht.com/-EP8xF7xkBNk/AAAAAAAAAAI/AAAAAAAAAAA/kZEUO1D53yE/s900-c-k-no/photo.jpg" alt="" class="channel-logo"></td>
+                <td>SonyMusicIndia</td>
+            </tr></table></li>
+            <li onclick="loadInterest('Sun TV')"><table><tr>
+                <td><img src="https://flyclipart.com/thumb2/sun-tv-logo-vector-443369.png" alt="" class="channel-logo"></td>
+                <td>Sun TV</td>
+            </tr></table></li>
+        </ul>
+        <ul>
+            <li onclick="window.location.href='about.html'">About</li>
+        </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main>
+        <div id="main-content">
+            <!-- Interest sections will be dynamically inserted here -->
+        </div>
+
+        <div id="search-content" style="display: none;">
+            <!-- Search results will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
