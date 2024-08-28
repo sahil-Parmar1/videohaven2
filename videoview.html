@@ -18,6 +18,7 @@
         <div class="video-container">
             <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
         </div>
+        <div><button class="load-more-btn" onclick="download()">Download</button></div>
         <div class="video-info" id="videoInfo">
             <h2>Loading...</h2>
             <p>Please wait while the video information loads.</p>
@@ -165,6 +166,13 @@ async function fetchVideos(interest, pageToken = '') {
             relatedVideos.forEach(video => {
                 suggestions.appendChild(createSuggestion(video));
             });
+        }
+
+        function download()
+        {
+            link = getVideoIdFromURL();
+            window.location.href='https://y2mate.run/en?q='+link;
+            
         }
 
         document.getElementById('loadMoreBtn').addEventListener('click', loadMoreVideos);
